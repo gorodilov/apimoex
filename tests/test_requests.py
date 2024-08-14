@@ -55,7 +55,7 @@ def test_get_table_notable():
 def test_get_reference(session):
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
-    assert len(data) == 10
+    assert len(data) == 11
     assert data[0] == {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"}
 
 
@@ -271,3 +271,15 @@ def test_get_index_tickers(session):
     assert data[15]["ticker"] == "MAGN"
     assert data[25]["till"] == "2023-03-03"
     assert data[35]["tradingsession"] == 3
+
+
+def test_get_board_today_trades(session):
+    data = requests.get_board_today_trades(session, "SNGSP")
+    assert isinstance(data, list)
+    assert len(data) > 100
+
+
+def test_get_board_securities(session):
+    data = requests.get_board_securities(session)
+    assert isinstance(data, list)
+    assert len(data) > 200

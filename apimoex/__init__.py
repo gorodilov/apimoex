@@ -21,6 +21,7 @@ from apimoex.requests import (
     get_market_candles,
     get_market_history,
     get_reference,
+    get_board_today_trades,
 )
 
 __all__ = [
@@ -37,4 +38,5 @@ __all__ = [
     "get_board_history",
     "get_index_tickers",
     "ISSClient",
+    "get_board_today_trades",
 ]

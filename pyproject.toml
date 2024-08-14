@@ -37,7 +37,7 @@ pythonVersion = "3.10"
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
-addopts = "--cov-report=term-missing --setup-show --verbose"
+addopts = "--setup-show --verbose"
 
 [tool.coverage.run]
 branch = true

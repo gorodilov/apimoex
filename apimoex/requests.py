@@ -22,6 +22,7 @@ __all__ = [
     "get_market_history",
     "get_board_history",
     "get_index_tickers",
+    "get_board_today_trades"
 ]
 
 
@@ -598,3 +599,57 @@ def get_index_tickers(
     query = _make_query(date=date, table=table, columns=columns)
 
     return _get_short_data(session, url, table, query)
+
+
+def get_board_today_trades(
+    session: requests.Session,
+    security: str,
+    columns: tuple[str, ...] | None = (
+            "TRADENO",
+            "TRADETIME",
+            "BOARDID",
+            "SECID",
+            "PRICE",
+            "QUANTITY",
+            "VALUE",
+            "PERIOD",
+            "TRADETIME_GRP",
+            "SYSTIME",
+            "BUYSELL",
+            "DECIMALS",
+            "TRADINGSESSION"),
+    board: str = "TQBR",
+    market: str = "shares",
+    engine: str = "stock",
+) -> client.Table:
+    """Получить сделки указанного инструмента в указанном режиме торгов за сегодня.
+
+    Описание запроса - https://iss.moex.com/iss/reference/55
+
+    :param session:
+        Сессия интернет соединения.
+    :param security:
+        Тикер ценной бумаги.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию момент начала свечки и HLOCV. Если пустой или None, то
+        загружаются все столбцы.
+    :param board:
+        Режим торгов - по умолчанию основной режим торгов T+2.
+    :param market:
+        Рынок - по умолчанию акции.
+    :param engine:
+        Движок - по умолчанию акции.
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = (
+        f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/"
+        f"boards/{board}/securities/{security}/trades.json"
+    )
+    table = "trades"
+    query = _make_query(table=table, columns=columns)
+
+    return _get_long_data(session, url, table, query)
+
+
