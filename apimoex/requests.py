@@ -23,7 +23,8 @@ __all__ = [
     "get_market_history",
     "get_board_history",
     "get_index_tickers",
-    "get_board_today_trades"
+    "get_board_today_trades",
+    "authenticate"
 ]
 
 
@@ -657,19 +658,19 @@ def get_board_today_trades(
 def authenticate(session: requests.Session, username: str, password: str) -> bool:
     
     """Для аутентификации пользователей используется basic-аутентификация. и передаются серверу в заголовке запроса на https://passport.moex.com/authenticate
-    При успешной аутентификации сервер возвращает cookie c именем MicexPassportCert. Далее этот токен должен передаваться при последующих запросах
-
+    При успешной аутентификации сервер возвращает cookie c именем MicexPassportCert. Далее этот токен должен передаваться при последующих запросах.
+    
     Описание запроса - https://moexalgo.github.io/api/rest/
 
     :param session:
         Сессия интернет соединения.
     :param username:
-        username iss moex
+        iss moex username 
     :param password:
-        password
+        iss moex password
 
     :return:
-        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+        True в случае успешной авторизации
     """
     url = "https://passport.moex.com/authenticate"
     r = False

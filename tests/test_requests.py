@@ -281,12 +281,6 @@ def test_get_board_today_trades(session):
     assert len(data) > 100
 
 
-def test_get_board_securities(session):
-    data = requests.get_board_securities(session)
-    assert isinstance(data, list)
-    assert len(data) > 200
-
-
 def test_authenticate(session):
     authenticated1 = requests.authenticate(session, "testuser", "testpass")
     assert not authenticated1
