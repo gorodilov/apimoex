@@ -25,8 +25,8 @@ __all__ = [
     "get_index_tickers",
     "get_board_today_trades",
     "authenticate",
-    "test_get_tradestats",
-    "test_get_orderstats"
+    "get_tradestats",
+    "get_orderstats"
 ]
 
 
