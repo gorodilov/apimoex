@@ -2,7 +2,6 @@
 import pandas as pd
 import pytest
 from requests import Session
-import os
 import json
 
 from apimoex import client, requests
@@ -292,3 +291,42 @@ def test_authenticate(session):
         
     authenticated2 = requests.authenticate(session, username, password)
     assert authenticated2
+    
+def test_get_tradestats(session):
+
+    with open('secrets.json') as secrets_file:
+        secrets = json.load(secrets_file)    
+        username = secrets.get('ISSMOEXUSERNAME')
+        password = secrets.get('ISSMOEXPASSWORD')
+        
+    assert requests.authenticate(session, username, password)
+
+
+    data = requests.get_tradestats(session, "SBER", start="2024-08-13", end="2024-08-14")
+    df = pd.DataFrame(data)
+    df.set_index("SYSTIME", inplace=True)
+    assert len(df.columns) == 25
+    assert df.index[0] == "2024-08-13 10:05:11"
+    assert df.index[-1] >= "2024-08-14"
+    assert df.at["2024-08-13 10:05:11", "pr_open"] == 281.05
+    assert df.at["2024-08-13 10:05:11", "sec_pr_close"] == 300
+    
+def test_get_orderstats(session):
+
+    with open('secrets.json') as secrets_file:
+        secrets = json.load(secrets_file)    
+        username = secrets.get('ISSMOEXUSERNAME')
+        password = secrets.get('ISSMOEXPASSWORD')
+        
+    assert requests.authenticate(session, username, password)
+
+
+    data = requests.get_orderstats(session, "SBER", start="2024-08-13", end="2024-08-14")
+    df = pd.DataFrame(data)
+    df.set_index("SYSTIME", inplace=True)
+    assert len(df.columns) == 25
+    assert df.index[0] == "2024-08-13 10:05:14"
+    assert df.index[-1] >= "2024-08-14"
+    assert df.at["2024-08-13 10:05:14", "put_orders_b"] == 47400
+    assert df.at["2024-08-13 10:05:14", "cancel_orders"] == 67706
+        

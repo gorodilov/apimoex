@@ -24,7 +24,9 @@ __all__ = [
     "get_board_history",
     "get_index_tickers",
     "get_board_today_trades",
-    "authenticate"
+    "authenticate",
+    "test_get_tradestats",
+    "test_get_orderstats"
 ]
 
 
@@ -679,3 +681,125 @@ def authenticate(session: requests.Session, username: str, password: str) -> boo
         r = respond.status_code == 200
         
     return r
+
+
+def get_tradestats(
+    session: requests.Session,
+    security: str,
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
+            "tradedate",
+            "tradetime",
+            "secid",
+            "pr_open",
+            "pr_high",
+            "pr_low",
+            "pr_close",
+            "pr_std",
+            "vol",
+            "val",
+            "trades",
+            "pr_vwap",
+            "pr_change",
+            "trades_b",
+            "trades_s",
+            "val_b",
+            "val_s",
+            "vol_b",
+            "vol_s",
+            "disb",
+            "pr_vwap_b",
+            "pr_vwap_s",
+            "SYSTIME",
+            "sec_pr_open",
+            "sec_pr_high",
+            "sec_pr_low",
+            "sec_pr_close"),
+) -> client.Table:
+    """Метрики рассчитанные на основе потока сделок (tradestats). Требуется авторизация ISS MOEX
+
+    Описание запроса - https://moexalgo.github.io/api/rest/
+
+    :param session:
+        Сессия интернет соединения.
+    :param security:
+        Тикер ценной бумаги.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию момент начала свечки и HLOCV. Если пустой или None, то
+        загружаются все столбцы.
+    :param start:
+        Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.
+    :param end:
+        Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории.
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = (
+        f"https://iss.moex.com/iss/datashop/algopack/eq/tradestats/{security}.json"
+    )
+    table = "data"
+    query = _make_query(start=start, end=end, table=table, columns=columns)
+
+    return _get_long_data(session, url, table, query)
+
+def get_orderstats(
+    session: requests.Session,
+    security: str,
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
+            "tradedate",
+            "tradetime",
+            "secid",
+            "put_orders_b",
+            "put_orders_s",
+            "put_val_b",
+            "put_val_s",
+            "put_vol_b",
+            "put_vol_s",
+            "put_vwap_b",
+            "put_vwap_s",
+            "put_vol",
+            "put_val",
+            "put_orders",
+            "cancel_orders_b",
+            "cancel_orders_s",
+            "cancel_val_b",
+            "cancel_val_s",
+            "cancel_vol_b",
+            "cancel_vol_s",
+            "cancel_vwap_b",
+            "cancel_vwap_s",
+            "cancel_vol",
+            "cancel_val",
+            "cancel_orders",
+            "SYSTIME"),
+) -> client.Table:
+    """Метрики рассчитанные на основе потока заявок (orderstats). Требуется авторизация ISS MOEX
+
+    Описание запроса - https://moexalgo.github.io/api/rest/
+
+    :param session:
+        Сессия интернет соединения.
+    :param security:
+        Тикер ценной бумаги.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию момент начала свечки и HLOCV. Если пустой или None, то
+        загружаются все столбцы.
+    :param start:
+        Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.
+    :param end:
+        Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории.
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = (
+        f"https://iss.moex.com/iss/datashop/algopack/eq/orderstats/{security}.json"
+    )
+    table = "data"
+    query = _make_query(start=start, end=end, table=table, columns=columns)
+
+    return _get_long_data(session, url, table, query)

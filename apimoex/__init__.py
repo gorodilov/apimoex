@@ -22,7 +22,9 @@ from apimoex.requests import (
     get_market_history,
     get_reference,
     get_board_today_trades,
-    authenticate
+    authenticate,
+    get_tradestats,
+    get_orderstats
 )
 
 __all__ = [
@@ -40,5 +42,7 @@ __all__ = [
     "get_index_tickers",
     "ISSClient",
     "get_board_today_trades",
-    "authenticate"
+    "authenticate",
+    "get_tradestats",
+    "get_orderstats"
 ]
