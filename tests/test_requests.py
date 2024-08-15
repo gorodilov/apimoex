@@ -2,6 +2,8 @@
 import pandas as pd
 import pytest
 from requests import Session
+import os
+import json
 
 from apimoex import client, requests
 
@@ -283,3 +285,16 @@ def test_get_board_securities(session):
     data = requests.get_board_securities(session)
     assert isinstance(data, list)
     assert len(data) > 200
+
+
+def test_authenticate(session):
+    authenticated1 = requests.authenticate(session, "testuser", "testpass")
+    assert not authenticated1
+    
+    with open('secrets.json') as secrets_file:
+        secrets = json.load(secrets_file)    
+        username = secrets.get('ISSMOEXUSERNAME')
+        password = secrets.get('ISSMOEXPASSWORD')
+        
+    authenticated2 = requests.authenticate(session, username, password)
+    assert authenticated2

@@ -6,6 +6,7 @@
 """
 
 import requests
+from requests.auth import HTTPBasicAuth
 
 from apimoex import client
 
@@ -653,3 +654,27 @@ def get_board_today_trades(
     return _get_long_data(session, url, table, query)
 
 
+def authenticate(session: requests.Session, username: str, password: str) -> bool:
+    
+    """Для аутентификации пользователей используется basic-аутентификация. и передаются серверу в заголовке запроса на https://passport.moex.com/authenticate
+    При успешной аутентификации сервер возвращает cookie c именем MicexPassportCert. Далее этот токен должен передаваться при последующих запросах
+
+    Описание запроса - https://moexalgo.github.io/api/rest/
+
+    :param session:
+        Сессия интернет соединения.
+    :param username:
+        username iss moex
+    :param password:
+        password
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = "https://passport.moex.com/authenticate"
+    r = False
+
+    with session.get(url, auth = HTTPBasicAuth(username, password)) as respond:
+        r = respond.status_code == 200
+        
+    return r

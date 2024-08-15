@@ -21,3 +21,5 @@ coverage.xml
 
 # VSCode
 .vscode
+
+secrets.json
