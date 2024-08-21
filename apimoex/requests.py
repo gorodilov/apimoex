@@ -608,6 +608,7 @@ def get_index_tickers(
 def get_board_today_trades(
     session: requests.Session,
     security: str,
+    tradeno: str = '',
     columns: tuple[str, ...] | None = (
             "TRADENO",
             "TRADETIME",
@@ -652,7 +653,9 @@ def get_board_today_trades(
         f"boards/{board}/securities/{security}/trades.json"
     )
     table = "trades"
-    query = _make_query(table=table, columns=columns)
+    query = _make_query(table=table, columns=columns, )
+    if len(tradeno)>0:
+        query['tradeno'] = tradeno
 
     return _get_long_data(session, url, table, query)
 
